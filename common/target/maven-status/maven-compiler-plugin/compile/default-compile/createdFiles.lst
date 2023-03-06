@@ -1,0 +1,16 @@
+com\pablito\common\dto\ProductDto.class
+com\pablito\common\dto\UserDto.class
+com\pablito\common\dto\AuditableDto$AuditableDtoBuilder.class
+com\pablito\common\dto\MailDto$MailDtoBuilder.class
+com\pablito\common\validator\group\Create.class
+com\pablito\common\validator\PasswordValid.class
+com\pablito\common\validator\impl\PasswordValidator.class
+com\pablito\common\dto\MailDto.class
+com\pablito\common\dto\TokenDto.class
+com\pablito\common\dto\ProductDto$ProductDtoBuilderImpl.class
+com\pablito\common\dto\UserDto$UserDtoBuilder.class
+com\pablito\common\dto\AuditableDto.class
+com\pablito\common\dto\ProductDto$ProductDtoBuilder.class
+com\pablito\common\kafka\ProductKafka$Builder.class
+com\pablito\common\kafka\ProductKafka.class
+com\pablito\common\dto\UserDto$UserDtoBuilderImpl.class

@@ -1,0 +1,114 @@
+version: '3.3'
+services:
+  discovery:
+    build: ./discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - cloud-network
+    environment:
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - cloud-network
+#  user:
+#    build: ./user
+#    ports:
+#      - "9090:9090"
+#    networks:
+#      - cloud-network
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb/user_service?useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&autoReconnect=true&characterEncoding=UTF-8&useUnicode=yes
+#      SPRING_DATASOURCE_PASSWORD: "${PDMYDB_PASSWORD}"
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+
+
+#  statistic:
+#    build: ./statistic
+#    environment:
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+#      ELASTICSEARCH_HOSTS: http://es-container:9200
+#      ELASTIC_PASSWORD: 3nap2TjqKmR3iY+s4slo
+#    networks:
+#      - cloud-network
+#    ports:
+#      - "9102:9102"
+#    depends_on:
+#      - elasticsearch
+
+#  product:
+#    build: ./product
+#    ports:
+#      - "9095:9095"
+#    networks:
+#      - cloud-network
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb/product_service?useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&autoReconnect=true&characterEncoding=UTF-8&useUnicode=yes
+#      SPRING_DATASOURCE_PASSWORD: "${PDMYDB_PASSWORD}"
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+#
+  notification:
+    build: ./notification
+    ports:
+      - "9115:9115"
+    networks:
+      - cloud-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://mongo/template
+      SPRING_DATA_MONGODB_USERNAME: root
+      SPRING_DATA_MONGODB_PASSWORD: example
+      QUARTZ_DATA_SOURCE_URL: jdbc:mysql://mysqldb/notification?useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&autoReconnect=true&characterEncoding=UTF-8&useUnicode=yes
+      QUARTZ_DATA_SOURCE_PASSWORD: "${PDMYDB_PASSWORD}"
+
+  #  basket:
+#    build: ./basket
+#    ports:
+#      - "9100:9100"
+#  gateway:
+#    build: ./gateway
+#    ports:
+#      - "1111:1111"
+  mysqldb:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - cloud-network
+    volumes:
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: "${PDMYDB_PASSWORD}"
+
+  mongo:
+    image: mongo
+    restart: always
+    networks:
+      - cloud-network
+    environment:
+      MONGO_INITDB_DATABASE: template
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+#  elasticsearch:
+#    container_name: es-container
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+#    environment:
+#      XPACK_SECURITY_ENABLED: "false"
+#      DISCOVERY_TYPE: single-node
+#    networks:
+#      - cloud-network
+#    ports:
+#      - "9200:9200"
+
+networks:
+  cloud-network:
+    driver: bridge
+
+#volumes:
+#  mysql-volume:
+#    external: true
+

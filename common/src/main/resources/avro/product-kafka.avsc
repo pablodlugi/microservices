@@ -1,0 +1,27 @@
+{
+  "namespace": "com.pablito.common.kafka",
+  "type": "record",
+  "name": "ProductKafka",
+  "fields": [
+    {
+      "name": "id",
+      "type": "long"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "code",
+      "type": "string"
+    },
+    {
+      "name": "price",
+      "type": "double"
+    },
+    {
+      "name": "quantity",
+      "type": "long"
+    }
+  ]
+}

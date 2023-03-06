@@ -1,0 +1,7 @@
+package com.example.statistic.domain.repository;
+
+import com.example.statistic.domain.dao.Statistic;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
+public interface StatisticRepository extends ElasticsearchRepository<Statistic, String> {
+}

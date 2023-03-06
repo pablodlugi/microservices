@@ -1,0 +1,38 @@
+server:
+  port: 9100
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+jwt:
+  privateKey: classpath:pkcs8.key
+  publicKey: public-key.pem
+
+spring:
+  application:
+    name: basket-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/basket_service?useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&autoReconnect=true&characterEncoding=UTF-8&useUnicode=yes
+    username: root
+    password: ${PDMYDB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  kafka:
+    bootstrap-servers:
+      - localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+    consumer:
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    template:
+      default-topic:

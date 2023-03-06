@@ -1,0 +1,56 @@
+server:
+  port: 9115
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+spring:
+  application:
+    name: notification-service
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: javaspring17
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        transport:
+          protocol: smtp
+
+  quartz:
+    jobStoreType: jdbc
+    scheduler-name: myClusteredScheduler
+    jdbc:
+      initialize-schema: always
+      comment-prefix: '#'
+    properties:
+      org:
+        quartz:
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadsInheritContextClassLoaderOfInitializingThread: true
+          scheduler:
+            instanceName: notification-service
+            instanceId: AUTO
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+#            dataSource: quartzDataSource
+quartzDataSource:
+  url: jdbc:mysql://localhost:3306/notification?useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Warsaw&autoReconnect=true&characterEncoding=UTF-8&useUnicode=yes
+  user: root
+  password: ${PDMYDB_PASSWORD:}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
