@@ -1,6 +1,7 @@
 package com.pablito.basket.controller;
 
 import com.pablito.basket.exception.ProductNotFoundException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,5 +16,11 @@ public class AdviceController {
     @ExceptionHandler(ProductNotFoundException.class)
     public void handleProductNotFoundException(ProductNotFoundException e) {
         log.warn("Product not found in DB: ", e);
+    }
+
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ExceptionHandler(RequestNotPermitted.class)
+    public void handleRequestNotPermittedException(RequestNotPermitted e) {
+        log.warn("TOO MANY REQUESTS: ", e);
     }
 }

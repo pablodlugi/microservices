@@ -1,15 +1,16 @@
 package com.pablito.basket.service;
 
-import com.pablito.basket.client.ProductClient;
 import com.pablito.basket.client.ProductClientFacade;
-import com.pablito.basket.client.UserClient;
+import com.pablito.basket.client.UserClientFacade;
 import com.pablito.basket.model.dao.Basket;
 import com.pablito.basket.model.dao.Product;
 import com.pablito.basket.repository.BasketRepository;
 import com.pablito.common.dto.ProductDto;
 import com.pablito.common.dto.UserDto;
 import com.pablito.common.kafka.ProductKafka;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class BasketServiceImpl implements BasketService {
 
@@ -28,14 +30,15 @@ public class BasketServiceImpl implements BasketService {
 
     private final ProductClientFacade productClientFacade;
 
-    private final UserClient userClient;
+    private final UserClientFacade userClientFacade;
 
 
     private final KafkaTemplate<String, ProductKafka> kafkaTemplate;
 
     @Override
+    @RateLimiter(name = "backendA")
     public void addProduct(Long productId, Long quantity, String token) {
-        UserDto currentUser = userClient.getCurrentUser(token);
+        UserDto currentUser = userClientFacade.getCurrentUser(token);
         ProductDto productToBasket = productClientFacade.getProductById(productId);
         Basket basket = basketRepository.findByUserId(currentUser.getId()).orElseGet(() -> Basket.builder()
                 .userId(currentUser.getId())
@@ -79,6 +82,10 @@ public class BasketServiceImpl implements BasketService {
                 .build());
     }
 
+    public void testFallback() {
+        log.info("LIMITER FALLBACK \n");
+    }
+
     @Override
     public void deleteProduct(Long productId, String token) {
         processUserBasket(token, basket -> {
@@ -98,12 +105,12 @@ public class BasketServiceImpl implements BasketService {
 
     @Override
     public List<Product> getAllProducts(String token) {
-        UserDto userDto = userClient.getCurrentUser(token);
+        UserDto userDto = userClientFacade.getCurrentUser(token);
         return basketRepository.findByUserId(userDto.getId()).map(Basket::getProducts).orElse(Collections.emptyList());
     }
 
     private void processUserBasket(String token, Consumer<Basket> consumer) {
-        UserDto userDto = userClient.getCurrentUser(token);
+        UserDto userDto = userClientFacade.getCurrentUser(token);
         basketRepository.findByUserId(userDto.getId()).ifPresent(consumer);
     }
 

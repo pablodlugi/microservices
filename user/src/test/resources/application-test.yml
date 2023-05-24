@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            notification-service[0]:
+              uri: http://localhost:8084
+
+eureka:
+  client:
+    fetchRegistry: false
+    registerWithEureka: false

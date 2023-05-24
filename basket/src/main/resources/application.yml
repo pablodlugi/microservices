@@ -36,3 +36,18 @@ spring:
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     template:
       default-topic:
+
+resilience4j:
+  ratelimiter:
+    instances:
+      backendA:
+        limitForPeriod: 2
+        limitRefreshPeriod: 3s
+        timeoutDuration: 6
+  circuitbreaker:
+    instances:
+      backendA:
+        failureRateThreshold: 10
+        permittedNumberOfCallsInHalfOpenState: 2
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 1

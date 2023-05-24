@@ -1,0 +1,12 @@
+eureka:
+  client:
+    fetchRegistry: false
+    registerWithEureka: false
+
+spring:
+  zipkin:
+    enabled: false
+  kafka:
+    consumer:
+      group-id: statistic-reader
+      auto-offset-reset: earliest
